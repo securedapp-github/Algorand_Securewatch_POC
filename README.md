@@ -93,52 +93,11 @@ The balance change for an asset destroy transaction will be as below:
 
 ## Examples
 
-### Data History Museum index
 
-The following code, when algod is pointed to TestNet, will find all transactions emitted by the [Data History Museum](https://datahistory.org) since the beginning of time in _seconds_ and then find them in real-time as they emerge on the chain.
 
-The watermark is stored in-memory so this particular example is not resilient to restarts. To change that you can implement proper persistence of the watermark. There is [an example that uses the file system](./examples/data-history-museum/) to demonstrate this.
+  
 
-```typescript
-const algorand = AlgorandClient.fromEnvironment()
-let watermark = 0
-const subscriber = new AlgorandSubscriber(
-  {
-    events: [
-      {
-        eventName: 'dhm-asset',
-        filter: {
-          type: TransactionType.acfg,
-          // Data History Museum creator account on TestNet
-          sender: 'ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU',
-        },
-      },
-    ],
-    frequencyInSeconds: 5,
-    maxRoundsToSync: 100,
-    syncBehaviour: 'catchup-with-indexer',
-    watermarkPersistence: {
-      get: async () => watermark,
-      set: async (newWatermark) => {
-        watermark = newWatermark
-      },
-    },
-  },
-  algorand.client.algod,
-  algorand.client.indexer,
-)
-subscriber.onBatch('dhm-asset', async (events) => {
-  console.log(`Received ${events.length} asset changes`)
-  // ... do stuff with the events
-})
 
-subscriber.onError((e) => {
-  // eslint-disable-next-line no-console
-  console.error(e)
-})
-
-subscriber.start()
-```
 
 ### USDC real-time monitoring
 
@@ -190,8 +149,8 @@ subscriber.start()
 
 ## Getting started
 
-To try examples in this repository:
+To try example in this repository:
 
 - `npm install`
 - Copy `.env.sample` to `.env` and edit to point to the Algorand node you want
-- `npm run dhm` or F5 in Visual Studio Code to get breakpoint debugging against one of the examples (or choose another)
+- `npm run usdc` or F5 in Visual Studio Code to get breakpoint debugging against one of the examples (or choose another)
